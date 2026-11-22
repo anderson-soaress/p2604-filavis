@@ -1,0 +1,24 @@
+{
+  "descricao": "Valores esperados para o DS-A (P1 v1.2, CT11, CT13 e CT15). Calculados à mão a partir de data/ds-a.csv.",
+  "dataReferencia": "2026-10-31",
+  "tolerancia": 0.1,
+  "chave": { "especialidade": "Cardiologia", "unidade": "UBS Centro", "competencia": "2026-10" },
+  "indicadores": {
+    "filaAtiva": 2,
+    "esperaReferencia": 20.0,
+    "esperaHistorica": 31.3,
+    "absenteismo": 25.0,
+    "capacidade": 40
+  },
+  "esperaEstimada": { "data": "2026-11-10", "valor": 30.0 },
+  "encaixe": { "vagaId": "000107", "registroId": "000101" },
+  "memoriaDeCalculo": {
+    "filaAtiva": "aguardando: 000101, 000102 = 2",
+    "esperaReferencia": "(30 + 10) / 2 = 20,0 dias até 2026-10-31",
+    "esperaHistorica": "(34 + 30 + 30) / 3 = 31,3 dias (solicitação → atendimento dos atendidos)",
+    "absenteismo": "faltou / (atendido + faltou) = 1 / 4 = 25,0%",
+    "capacidade": "vagas_ofertadas_periodo = 40",
+    "esperaEstimada": "20,0 + 10 dias (2026-10-31 → 2026-11-10) = 30,0",
+    "encaixe": "000107 cancelado em 2026-11-10 (terça), 14:00, PRF-017 na UBS Centro: dentro de 13:00–17:00; candidata mais antiga = 000101"
+  }
+}

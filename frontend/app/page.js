@@ -102,7 +102,7 @@ export default function Home() {
           <table><thead><tr><th>Especialidade</th><th>Unidade</th><th>Fila</th><th>Espera ref. (dias)</th><th>Espera estimada</th><th>Absenteísmo</th><th>Capacidade</th></tr></thead>
             <tbody>{indicadores.map(item => <tr key={`${item.especialidade}-${item.unidade}-${item.competencia}`}>
               <td>{item.especialidade}</td><td>{item.unidade}</td><td>{item.filaAtiva}</td>
-              <td>{item.esperaReferencia}</td><td>{item.esperaEstimada}</td><td>{item.absenteismo}%</td><td>{item.capacidade}</td>
+              <td>{item.esperaReferencia ?? "não calculável"}</td><td>{item.esperaEstimada ?? "não calculável"}</td><td>{item.absenteismo}%</td><td>{item.capacidade}</td>
             </tr>)}</tbody></table>}
       </section>
       {mensagem && <p className="success">{mensagem}</p>}
