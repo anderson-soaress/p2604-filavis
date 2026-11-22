@@ -56,7 +56,7 @@ model Indicador {
   unidade               String
   competencia           String
   filaAtiva             Int
-  esperaReferencia      Float
+  esperaReferencia      Float?   // null = não calculável (sem fila ativa)
   esperaHistorica       Float
   absenteismo            Float
   capacidade            Int
@@ -74,4 +74,17 @@ model SugestaoEncaixe {
   usuarioId      Int
   criadoEm       DateTime @default(now())
   usuario        Usuario  @relation(fields: [usuarioId], references: [id])
+}
+
+// Cadastro de referência de disponibilidade (RF007/RN05).
+// diaSemana segue Date#getUTCDay: 0 = domingo ... 6 = sábado.
+// Faixa de horário [horaInicio, horaFim), no formato HH:MM.
+model DisponibilidadeProfissional {
+  id                 Int    @id @default(autoincrement())
+  codigoProfissional String
+  unidade            String
+  diaSemana          Int
+  horaInicio         String
+  horaFim            String
+  @@unique([codigoProfissional, unidade, diaSemana, horaInicio])
 }
