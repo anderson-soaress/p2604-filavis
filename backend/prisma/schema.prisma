@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Perfil {
+  GESTOR
+  REGULACAO
+}
+
+enum StatusRegistro {
+  aguardando
+  agendado
+  atendido
+  faltou
+  cancelado
+}
+
+model Usuario {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  email        String   @unique
+  senhaHash    String
+  perfil       Perfil
+  criadoEm     DateTime @default(now())
+  sugestoes    SugestaoEncaixe[]
+}
+
+model Registro {
+  id                    Int      @id @default(autoincrement())
+  idRegistro            String   @unique
+  especialidade         String
+  unidade               String
+  dataSolicitacao       DateTime
+  status                StatusRegistro
+  competencia           String
+  vagasOfertadasPeriodo Int
+  dataAgendada          DateTime?
+  dataAtendimento       DateTime?
+  funcionario           String?
+  sala                  String?
+  horarioAgendado       String?
+  horarioComprovado     Boolean  @default(false)
+  importadoEm           DateTime @default(now())
+  @@index([especialidade, unidade, competencia])
+  @@index([status, dataSolicitacao])
+}
+
+model Indicador {
+  id                    Int      @id @default(autoincrement())
+  especialidade         String
+  unidade               String
+  competencia           String
+  filaAtiva             Int
+  esperaReferencia      Float
+  esperaHistorica       Float
+  absenteismo            Float
+  capacidade            Int
+  dataReferencia        DateTime
+  atualizadoEm          DateTime @updatedAt
+  @@unique([especialidade, unidade, competencia])
+}
+
+model SugestaoEncaixe {
+  id             Int      @id @default(autoincrement())
+  registroId     String
+  vagaId         String
+  criterio       String
+  decisao        String
+  usuarioId      Int
+  criadoEm       DateTime @default(now())
+  usuario        Usuario  @relation(fields: [usuarioId], references: [id])
+}
