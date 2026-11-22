@@ -15,9 +15,11 @@ function calcularIndicadores(registros, hoje = new Date()) {
     const aguardando = itens.filter(item => item.status === "aguardando");
     const atendidos = itens.filter(item => item.status === "atendido");
     const faltas = itens.filter(item => item.status === "faltou");
+    // Sem fila ativa a espera é "não calculável" (null), e não zero: zero dias
+    // significaria que alguém foi atendido na hora, o que é falso.
     const espera = aguardando.length
       ? aguardando.reduce((soma, item) => soma + diasEntre(item.dataSolicitacao, hoje), 0) / aguardando.length
-      : 0;
+      : null;
     const esperaHistorica = atendidos.length
       ? atendidos.reduce((soma, item) => soma + diasEntre(item.dataSolicitacao, item.dataAtendimento), 0) / atendidos.length
       : 0;
@@ -26,7 +28,7 @@ function calcularIndicadores(registros, hoje = new Date()) {
     return {
       especialidade, unidade, competencia,
       filaAtiva: aguardando.length,
-      esperaReferencia: Number(espera.toFixed(2)),
+      esperaReferencia: espera === null ? null : Number(espera.toFixed(2)),
       esperaHistorica: Number(esperaHistorica.toFixed(2)),
       absenteismo: denominador ? Number((faltas.length / denominador * 100).toFixed(2)) : 0,
       capacidade,
@@ -36,6 +38,7 @@ function calcularIndicadores(registros, hoje = new Date()) {
 }
 
 function estimarEspera(esperaReferencia, dataReferencia, hoje = new Date()) {
+  if (esperaReferencia === null || esperaReferencia === undefined) return null;
   return Number((Number(esperaReferencia) + diasEntre(dataReferencia, hoje)).toFixed(2));
 }
 
