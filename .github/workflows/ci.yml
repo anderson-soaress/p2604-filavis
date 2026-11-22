@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read # gitleaks lê os commits do PR
+
+jobs:
+  testes:
+    name: Lint, testes, cobertura e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: filavis_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Credenciais do container efêmero da CI; não são segredos de nenhum ambiente real.
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/filavis_test
+      SESSION_SECRET: segredo-efemero-da-ci
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # o gitleaks precisa do histórico completo
+
+      # Primeiro passo de verificação: se houver segredo versionado, falha antes de tudo.
+      - name: Gitleaks (varredura de segredos)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Prisma generate
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: Aplicar migrações
+        working-directory: backend
+        run: npx prisma migrate deploy
+
+      - name: Seed (contas sintéticas e cadastro de referência)
+        run: npm run db:seed
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes com cobertura (unit + api)
+        run: npm run test:coverage
+
+      - name: Build do frontend
+        run: npm run build -w frontend
+
+      - name: Publicar cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: backend/coverage/
+          if-no-files-found: warn
