@@ -1,0 +1,8 @@
+id_registro,especialidade,unidade,data_solicitacao,status,competencia,vagas_ofertadas_periodo,data_agendada,data_atendimento,funcionario,sala,horario_agendado
+000101,Cardiologia,UBS Centro,2026-10-01,aguardando,2026-10,40,,,,,
+000102,Cardiologia,UBS Centro,2026-10-21,aguardando,2026-10,40,,,,,
+000103,Cardiologia,UBS Centro,2026-09-01,atendido,2026-10,40,2026-10-05,2026-10-05,,,
+000104,Cardiologia,UBS Centro,2026-09-11,atendido,2026-10,40,2026-10-11,2026-10-11,,,
+000105,Cardiologia,UBS Centro,2026-09-15,faltou,2026-10,40,2026-10-10,,,,
+000106,Cardiologia,UBS Centro,2026-09-20,atendido,2026-10,40,2026-10-20,2026-10-20,,,
+000107,Cardiologia,UBS Centro,2026-09-25,cancelado,2026-10,40,2026-11-10,,PRF-017,S02,14:00
